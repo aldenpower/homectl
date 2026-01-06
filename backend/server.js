@@ -1,32 +1,44 @@
-const express = require("express");
-const ping = require("ping");
-const fs = require("fs");
-const cors = require("cors");
-
-const hosts = JSON.parse(fs.readFileSync("./hosts.json"));
+const express = require('express');
+const ping = require('ping');
+const wol = require('wol');
+const { NodeSSH } = require('node-ssh');
+const cors = require('cors');
+const hosts = require('./hosts.json');
 
 const app = express();
-
-app.use(cors({
-  origin: ["http://localhost:8080"],
-  methods: ["GET", "POST"],
-}));
-
+app.use(cors());
 app.use(express.json());
 
-app.get("/api/status/:name", async (req, res) => {
-  const host = hosts[req.params.name];
+const ssh = new NodeSSH();
 
-  if (!host) {
-    return res.status(404).json({ error: "Unknown host" });
-  }
+app.get('/api/status', async (req, res) => {
+  const results = await Promise.all(
+    hosts.map(async h => {
+      const r = await ping.promise.probe(h.ip, { timeout: 2 });
+      return { ...h, online: r.alive };
+    })
+  );
+  res.json(results);
+});
+
+app.post('/api/wake', async (req, res) => {
+  const host = hosts.find(h => h.ip === req.body.ip);
+  if (!host) return res.status(404).send("Host not found");
+
+  await wol.wake(host.mac);
+  res.send("WOL sent");
+});
+
+app.post('/api/shutdown', async (req, res) => {
+  const host = hosts.find(h => h.ip === req.body.ip);
+  if (!host) return res.status(404).send("Host not found");
 
   try {
-    const result = await ping.promise.probe(host.ip, { timeout: 2 });
-    res.json({ online: result.alive });
-  } catch (err) {
-    console.error("Ping error:", err);
-    res.status(500).json({ error: "Ping failed" });
+    await ssh.connect({ host: host.ip, username: host.user });
+    await ssh.execCommand('sudo shutdown now');
+    res.send("Shutdown command sent");
+  } catch (e) {
+    res.status(500).send("SSH failed");
   }
 });
 

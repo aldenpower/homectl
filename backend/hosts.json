@@ -1,6 +1,23 @@
-{
-  "raspberrypi1": {
+[
+  {
+    "name": "RaspberryPi1",
     "ip": "192.168.0.2",
-    "mac": ""
+    "mac": "",
+    "user": "",
+    "description": ""
+  },
+  {
+    "name": "Middebian",
+    "ip": "192.168.0.115",
+    "mac": "",
+    "user": "",
+    "description": ""
+  },
+  {
+    "name": "Rsyncer",
+    "ip": "192.168.0.55",
+    "mac": "",
+    "user": "",
+    "description": ""
   }
-}
+]
