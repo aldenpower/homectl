@@ -1,0 +1,12 @@
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display:inline-block;
+}
+.online {
+  background: green;
+}
+.offline {
+  background: red;
+}
