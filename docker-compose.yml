@@ -2,8 +2,9 @@ services:
   backend:
     build: ./backend
     container_name: homectl-backend
-    ports:
-      - "3000:3000"
+    network_mode: host
+    volumes:
+      - ~/.ssh:/root/.ssh:ro
     restart: unless-stopped
 
   frontend:

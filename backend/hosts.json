@@ -2,8 +2,18 @@
   {
     "name": "RaspberryPi1",
     "ip": "192.168.0.2",
-    "mac": "",
-    "user": "",
+    "mac": "ff:ff:ff:ff:ff:ff",
+    "user": "user",
+    "ssh_key": "id_rsa_node",
+    "description": ""
+  },
+  {
+    "name": "Pve",
+    "ip": "192.168.0.3",
+    "mac": "ff:ff:ff:ff:ff:ff",
+    "user": "root",
+    "ssh_port": "2000",
+    "ssh_key": "id_rsa_node",
     "description": ""
   },
   {
